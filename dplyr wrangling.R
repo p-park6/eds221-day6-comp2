@@ -63,3 +63,60 @@ cara_13
 
 
 # ------------------ Selecting columns -----------------#
+# Selected individual columns by names separate them by a oclumn
+crabs_subset <- pie_crab %>% select(latitude, size, water_temp)
+
+
+#select a range of columns using:
+crabs_subset_2 <- pie_crab %>% select(site:air_temp)
+
+# select a range and an individual column
+crabs_subset3 <- pie_crab %>%  select(date:water_temp, name)
+pie_crab %>% select(name, water_temp, size)
+
+
+#-----------------Mutate------------------#
+#use dplyr::mutate() to add or update a column, while keeping all existing columns
+
+crabs_cm <- pie_crab %>%
+  mutate(size_cm = size /10)
+
+#what happens if I use mutate to add a new column containing the mean of the size column?
+crabs_mean <- pie_crab %>%
+  mutate(mean_size = mean(size, na.rm = TRUE))
+crabs_mean
+
+crabs_awesome <- pie_crab %>%
+  mutate(name = "Molly is awesome")
+crabs_awesome
+
+#reminder: group_by + summarize
+mean_size_by_site <- pie_crab %>%
+  group_by(site) %>%
+  summarize(mean_size = mean(size, na.rm = TRUE),
+            sd_size = sd(size, na.rm = TRUE))
+mean_size_by_site
+
+
+#what about a group_nby then mutate
+group_mutate <- pie_crab %>%
+  group_by(site) %>%
+  mutate(mean_size = mean(size, na.rm = TRUE))
+
+# what if i want to create a new column in pie_crab that contains "giant" if the size is greater than 35 or "not giant" if the size is less than or equal to 35
+
+#use dplyr::case_when() to write if-else statements more easily
+crabs_bin <- pie_crab %>%
+  mutate(size_binned = case_when(
+    size > 20 ~ "giant",
+    size <= 20 ~ "not giant"
+  ))
+
+
+sites_binned <- pie_crab %>%
+  mutate(region = case_when(
+    site %in% c("ZI", "CC", "PIE") ~ "Low",
+    site %in% c("BB", "NIB") ~ "Middle",
+    TRUE ~ "High" # or .default = "High"
+  ))
+
